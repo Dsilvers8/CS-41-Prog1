@@ -1,0 +1,178 @@
+#include<iomanip>
+#include<iostream>
+#include<stdlib.h>
+#include<stdio.h>
+#include<string>
+#include<sstream>
+using namespace std;
+
+class Stack
+{
+private:
+	double data;
+	Stack* top;
+	Stack* next;
+	Stack* head;
+	int counter;
+	
+public:
+	Stack()
+	{
+		top = NULL;
+		next = NULL;
+	}
+
+	bool isEmpty()
+	{
+		return (top == NULL);
+	}
+
+	bool full()
+	{
+		return 0;
+	}
+
+	void push(double input)
+	{
+		Stack* q = new Stack;
+		q->data = input;
+		q->next = top;
+		top = q;
+		counter++;
+	}
+
+	double pop()
+	{
+		if (isEmpty())
+		{
+			//cout << "Too many operators!" << endl;
+		}
+		else
+		{
+			counter--;
+			Stack* q = top->next;
+			double value = top->data;
+			delete top;
+			top = q;
+			return value;
+		}
+	}
+
+	int stacklength() //finds the number of elements in the stack
+	{
+		Stack* temp = head;
+		int i = 0;
+		temp = top;
+		while (temp != NULL)
+		{
+			i++;
+			temp = temp->next;
+		}
+		return i;
+
+	}
+
+	void print()
+	{
+		cout << top->data << endl;
+		cout << stacklength() << endl;
+	}
+
+	bool isOperator(const string& input)
+	{
+		string ops[] = { "-", "+", "*", "/" };
+		for (int i = 0; i < 4; i++)
+		{
+			if (input == ops[i])
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	bool performOp(const string& input, Stack& stack)
+	{
+		if (stacklength() >= 2)
+		{
+			double fVal, sVal, result;
+			int error = 0;
+
+			sVal = stack.pop();
+			fVal = stack.pop();
+
+			if (input == "-")
+			{
+				stack.push(fVal - sVal);
+			}
+			else if (input == "+")
+			{
+				stack.push(fVal + sVal);
+			}
+			else if (input == "*")
+			{
+				stack.push(fVal * sVal);
+			}
+			else if (input == "/" && sVal != 0)
+			{
+				stack.push(fVal / sVal);
+			}
+			if (input == "/" && sVal == 0)
+			{
+				cout << "Division by zero error" << endl;
+				error = 1;
+			}
+			if (error == 0)
+			{
+				stack.print();
+			}
+
+		}
+		else
+		{
+			if (input == "=")return false;
+			cout << "Error:Too many operators" << endl;
+
+			return true;
+		}
+		return false;
+	}
+};
+
+int main()
+{
+		Stack a;
+		string input;
+		cout << "Reverse Polish Calculator! Enter Calculation or Enter 0 to quit.\n";
+		cout << "Enter a Reverse Polish Expression: ";
+
+		while (true)
+		{
+			cin >> input;
+			double num;
+
+			if (istringstream(input) >> num)
+			{
+				a.push(num);
+			}
+			else if (a.isOperator(input))
+			{
+				a.performOp(input, a);
+			}
+			
+			else
+			{
+				cout << "Invalid input" << endl;
+			}
+			/*int stacklength = 0;
+			if (stacklength() == 1)cout << pop() << endl;
+			else cout << "Error: Too many operands\n";
+			*/
+			if (input == "0") // if 0 is entered, stop program
+			{
+				cout << "Program ended" << endl;
+				system("PAUSE");
+				return 0;
+			}
+		}
+}
